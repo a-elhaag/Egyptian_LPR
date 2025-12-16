@@ -11,7 +11,7 @@ st.set_page_config(
     page_title="Egyptian LPR System",
     page_icon="🚗",
     layout="wide",
-    initial_sidebar_state="collapsed",
+    initial_sidebar_state="expanded",
 )
 
 # Custom CSS for modern look
@@ -152,7 +152,7 @@ def process_image(img, plate_model, char_model):
     plate_results = plate_model(img, verbose=False)
 
     if len(plate_results[0].boxes) == 0:
-        results["message"] = "❌ No license plate detected in the image"
+        results["message"] = "No license plate detected in the image"
         return results
 
     # Get plate coordinates
@@ -225,9 +225,9 @@ def process_image(img, plate_model, char_model):
 
     results["char_detection"] = char_detection
 
-    # Sort: numbers LTR, letters RTL
+    # Sort: numbers LTR, letters LTR (bidi will handle RTL display)
     numbers_list.sort(key=lambda x: x[0])
-    letters_list.sort(key=lambda x: x[0], reverse=True)
+    letters_list.sort(key=lambda x: x[0])
 
     # Convert to Arabic
     final_nums = "".join([CLASS_MAPPING.get(n[1], n[1]) for n in numbers_list])
@@ -239,17 +239,34 @@ def process_image(img, plate_model, char_model):
 
     results["numbers"] = final_nums
     results["letters"] = bidi_letters
-    results["full_plate"] = f"{final_nums} | {bidi_letters}"
+    results["full_plate"] = f"{bidi_letters} | {final_nums}"
     results["success"] = True
-    results["message"] = "✅ License plate recognized successfully!"
+    results["message"] = "License plate recognized successfully!"
 
     return results
 
 
 def main():
+    # Sidebar with team members
+    with st.sidebar:
+        st.markdown("### Team Members")
+        st.markdown(
+            """
+        - Ammar Gamal
+        - Marwan Hossam
+        - Mazen Ashraf
+        - Youssif Monir
+        - Sohaila Tamer
+        - Youstina Adel
+        - Roba Tarek
+        - Youmna Hesham
+        - Anas Ahmed
+        """
+        )
+
     # Header
     st.markdown(
-        '<h1 class="main-header">🚗 Egyptian License Plate Recognition</h1>',
+        '<h1 class="main-header">Egyptian License Plate Recognition</h1>',
         unsafe_allow_html=True,
     )
     st.markdown(
@@ -264,7 +281,7 @@ def main():
     # File uploader with drag and drop
     st.markdown("---")
     uploaded_file = st.file_uploader(
-        "📁 Drag and drop an image here or click to browse",
+        "Drag and drop an image here or click to browse",
         type=["jpg", "jpeg", "png"],
         help="Supported formats: JPG, JPEG, PNG",
     )
@@ -275,7 +292,7 @@ def main():
         img = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
 
         # Process button
-        if st.button("🔍 Process Image", type="primary", use_container_width=True):
+        if st.button("Process Image", type="primary", use_container_width=True):
             with st.spinner("Processing image..."):
                 results = process_image(img, plate_model, char_model)
 
@@ -293,7 +310,7 @@ def main():
 
             # Display Results
             st.markdown("---")
-            st.markdown("## 🎯 Recognition Results")
+            st.markdown("## Recognition Results")
 
             col1, col2, col3 = st.columns(3)
             with col1:
@@ -331,7 +348,7 @@ def main():
 
             # Processing Pipeline
             st.markdown("---")
-            st.markdown("## 📊 Processing Pipeline")
+            st.markdown("## Processing Pipeline")
 
             # Step 1: Original Image
             st.markdown(
@@ -396,7 +413,7 @@ def main():
 
             # Pipeline Info
             st.markdown("---")
-            st.markdown("## ℹ️ Pipeline Information")
+            st.markdown("## Pipeline Information")
             with st.expander("View Technical Details"):
                 st.markdown(
                     """
@@ -415,7 +432,7 @@ def main():
 
         else:
             # Show preview
-            st.markdown("### 📷 Image Preview")
+            st.markdown("### Image Preview")
             st.image(
                 cv2.cvtColor(img, cv2.COLOR_BGR2RGB),
                 caption=f"Uploaded: {uploaded_file.name}",
@@ -434,7 +451,7 @@ def main():
             background-color: #fafafa;
             margin: 20px 0;
         ">
-            <h3 style="color: #888;">📤 Upload an Image</h3>
+            <h3 style="color: #888;">Upload an Image</h3>
             <p style="color: #aaa;">Drag and drop or click to select a file</p>
             <p style="color: #aaa; font-size: 0.9rem;">Supported: JPG, JPEG, PNG</p>
         </div>
@@ -447,7 +464,7 @@ def main():
     st.markdown(
         """
     <div style="text-align: center; color: #888; padding: 20px;">
-        <p>🇪🇬 Egyptian License Plate Recognition System</p>
+        <p>Egyptian License Plate Recognition System</p>
         <p style="font-size: 0.8rem;">Powered by YOLOv8 & Streamlit</p>
     </div>
     """,
