@@ -1,0 +1,45 @@
+# .gitignore for Egyptian_LPR
+# Ignore Python cache and environment
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+.env
+
+# Ignore dataset images and labels (but keep model weights)
+datasets/*/train/images/
+datasets/*/train/labels/
+datasets/*/test/images/
+datasets/*/test/labels/
+datasets/*/valid/images/
+datasets/*/valid/labels/
+
+# Ignore YOLO training runs except weights
+runs_chars/*/weights/last.pt
+runs_chars/*/weights/best.pt
+runs_plate/*/weights/last.pt
+runs_plate/*/weights/best.pt
+runs_chars/*/weights/
+!runs_chars/*/weights/best.pt
+!runs_chars/*/weights/last.pt
+runs_plate/*/weights/
+!runs_plate/*/weights/best.pt
+!runs_plate/*/weights/last.pt
+
+# Ignore all other run artifacts except weights
+runs_chars/*
+!runs_chars/*/weights/
+runs_plate/*
+!runs_plate/*/weights/
+
+# Ignore Streamlit and OS files
+.streamlit/
+.DS_Store
+
+# Do not ignore model weights (so they are pushed)
+!runs_chars/*/weights/best.pt
+!runs_chars/*/weights/last.pt
+!runs_plate/*/weights/best.pt
+!runs_plate/*/weights/last.pt
